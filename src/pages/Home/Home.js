@@ -16,11 +16,17 @@ import folks from "../../assests/svg-folks.svg";
 import stars from "../../assests/svg-star.svg";
 import file from "../../assests/svg-file.svg";
 
+// api
 import { getPublicGists, getGistForUser } from "../../services/gistService";
+
+// import dayjs
 import dayjs from "dayjs";
 import "dayjs/locale/en"; // Import English locale for formatting
 
+// css
 import "./Home.css";
+
+// redux
 import { useSelector } from "react-redux";
 
 function Home() {
@@ -28,6 +34,7 @@ function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const searchValue = useSelector((state) => state.searchValue).search;
 
+  // condition for api hit
   useEffect(() => {
     if (searchValue) {
       getUserGists();
@@ -36,10 +43,12 @@ function Home() {
     }
   }, [searchValue]);
 
+  // fucntion of all data
   const getAllGists = async () => {
     setIsLoading(true);
     try {
       const response = await getPublicGists();
+      console.log("----------------------",response)
       setGistData(response.data);
     } catch (err) {
       console.log(err, "errrr");
@@ -47,6 +56,8 @@ function Home() {
       setIsLoading(false);
     }
   };
+
+  //function for specific search
   const getUserGists = async () => {
     setIsLoading(true);
     try {
@@ -138,7 +149,17 @@ function Home() {
               </Box>
             );
           })
-        ) : isLoading ? (
+        ) : gistData?.length === 0 && !isLoading ? (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              paddingTop: "10%",
+            }}
+          >
+            No Data Found
+          </div>
+        ) : (
           <div
             style={{
               display: "flex",
@@ -148,16 +169,6 @@ function Home() {
             data-testid="loader"
           >
             <CircularProgress />
-          </div>
-        ) : (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              paddingTop: "10%",
-            }}
-          >
-            No Data Found
           </div>
         )}
       </Container>
